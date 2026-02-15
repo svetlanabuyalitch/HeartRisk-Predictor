@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результаты предсказания</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .success-badge {
+            text-align: center;
+            color: #4CAF50;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-card h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-percent {
+            font-size: 20px;
+            opacity: 0.9;
+        }
+
+        .model-status {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .model-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .model-loaded {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .model-not-loaded {
+            background-color: #ff9800;
+            color: white;
+        }
+
+        .predictions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .predictions-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .predictions-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .predictions-table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .risk-high {
+            color: #f44336;
+            font-weight: 600;
+            padding: 4px 12px;
+            background-color: #ffebee;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .risk-low {
+            color: #4CAF50;
+            font-weight: 600;
+            padding: 4px 12px;
+            background-color: #e8f5e9;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .note {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #fff3e0;
+            border-radius: 10px;
+            color: #e65100;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .stat-number {
+                font-size: 36px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>❤️ Результаты предсказания</h1>
+
+        <div class="success-badge">
+            ✅ {{ status }} — модель успешно обработала данные
+        </div>
+
+        <div class="model-status">
+            <span>🤖 Статус модели:</span>
+            {% if model_loaded %}
+                <span class="model-badge model-loaded">Модель загружена</span>
+            {% else %}
+                <span class="model-badge model-not-loaded">Демо-режим (заглушка)</span>
+            {% endif %}
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>📊 Всего записей</h3>
+                <div class="stat-number">{{ total }}</div>
+                <div class="stat-percent">обработано</div>
+            </div>
+
+            <div class="stat-card" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">
+                <h3>✅ Нет риска</h3>
+                <div class="stat-number">{{ class_0 }}</div>
+                <div class="stat-percent">{{ class_0_percent }}%</div>
+            </div>
+
+            <div class="stat-card" style="background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);">
+                <h3>⚠️ Есть риск</h3>
+                <div class="stat-number">{{ class_1 }}</div>
+                <div class="stat-percent">{{ class_1_percent }}%</div>
+            </div>
+        </div>
+
+        <h2 style="margin-bottom: 20px; color: #333;">🔮 Первые 10 предсказаний</h2>
+
+        <table class="predictions-table">
+            <thead>
+                <tr>
+                    <th>ID пациента</th>
+                    <th>Предсказание</th>
+                    <th>Риск</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in range(predictions|length) %}
+                <tr>
+                    <td><strong>{{ ids[i] }}</strong></td>
+                    <td>{{ predictions[i] }}</td>
+                    <td>
+                        {% if predictions[i] == 1 %}
+                            <span class="risk-high">⚠️ Высокий</span>
+                        {% else %}
+                            <span class="risk-low">✅ Низкий</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="button-group">
+            <a href="/" class="btn btn-primary">
+                📁 Загрузить другой файл
+            </a>
+            <a href="/download/{{ result_path.split('/')[-1] }}" class="btn btn-secondary">
+                📥 Скачать результаты (JSON)
+            </a>
+        </div>
+
+        {% if not model_loaded %}
+        <div class="note">
+            <strong>ℹ️ Демо-режим:</strong> Модель не найдена. Используются случайные предсказания для демонстрации.
+            Для полноценной работы поместите файл <code>best_heart_attack_model.pkl</code> в папку с приложением.
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

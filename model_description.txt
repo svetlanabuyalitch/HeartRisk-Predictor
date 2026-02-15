@@ -1,0 +1,22 @@
+================================================================================
+ИНСПЕКЦИЯ МОДЕЛИ: best_heart_attack_model.bin
+================================================================================
+
+1. ТИП МОДЕЛИ: Pipeline
+
+2. PIPELINE ШАГИ:
+   1. preprocessor: ColumnTransformer
+      - num: RobustScaler, колонки: 20
+      - cat: OneHotEncoder, колонки: 1
+   2. classifier: RandomForestClassifier
+      Параметры:
+        n_estimators: 300
+        max_depth: 5
+        min_samples_split: 5
+        min_samples_leaf: 1
+        class_weight: balanced
+
+3. КЛАССЫ: [0 1]
+
+4. ПРИЗНАКИ: 21 признаков
+   Первые 5: ['age', 'cholesterol', 'heart_rate', 'diabetes', 'family_history']

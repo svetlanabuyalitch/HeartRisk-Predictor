@@ -1,0 +1,6 @@
+id,age,gender,cholesterol,blood_pressure,heart_rate,smoking,diabetes,family_history
+1001,45,1,180,120,70,0,0,1
+1002,62,0,240,140,85,1,1,1
+1003,34,1,150,110,65,0,0,0
+1004,55,1,210,135,80,1,0,1
+1005,41,0,190,125,75,0,1,0
